@@ -1,9 +1,8 @@
 package lesson3.homework;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class homework3 {
 
     /*Напишите приложение, которое будет запрашивать у пользователя следующие данные, разделенные пробелом:
@@ -35,31 +34,39 @@ public class homework3 {
 пользователь должен увидеть стектрейс ошибки. */
 
     public static void main(String[] args) throws MyTypeException{
-       
-       String newData = inputData();
-       try{
-       checkingData(newData);
-       } catch (MyCountException e){
-        System.out.println(e.getMessage());
-        inputData();
+       while(true){ 
+        System.out.println("Выберете действие:\n1. Добавить новые данные;\n2. Завершить работу.");
+        Scanner sc = new Scanner(System.in);
+        int choice = sc.nextInt();
+        if (choice==1){
+            String newData = inputData();
+                try{
+                checkingAndWritingData(newData);
+                } catch (MyCountException e){
+                    System.out.println(e.getMessage());
+                }catch (MyTypeException e){
+                    System.out.println(e.getMessage());
+                }
+        }else{
+            sc.close();
+            break;
+        }
        }
-        
-      
     }
 
     public static String inputData(){
         String result = "";
-        Scanner sc = new Scanner(System.in,"Cp866");
-        System.out.println("Введите данные, разделенные пробелом: ");
-        if (sc.hasNextLine()){
-            result = sc.nextLine();
+        Scanner scan = new Scanner(System.in,"Cp866");
+        System.out.println("Введите данные, разделенные пробелом ");
+        if (scan.hasNextLine()){
+            result = scan.nextLine();
         }
         // sc.close();
         return result;
     }
 
 
-    public static void checkingData(String data) throws MyCountException, MyTypeException{
+  public static void checkingAndWritingData(String data) throws MyCountException, MyTypeException{
         
         String[] splitedData = data.split(" ");
         for (int i = 0; i < splitedData.length; i++) {
@@ -70,6 +77,16 @@ public class homework3 {
         }
         stringChecking(splitedData[0], splitedData[1], splitedData[2]);   
         phonenumberChecking(splitedData[3]);
+        String path = String.format("C:/Users/1/Desktop/Master/GB/exceptions/lesson3/homework/%s.txt", splitedData[0]);
+        try{
+            FileWriter file = new FileWriter(path,true);
+            String text = String.format("<%s><%s><%s><%s>\n", splitedData[0], splitedData[1],splitedData[2],splitedData[3]);
+            file.write(text);
+            file.write("\n");
+            file.flush();
+        }catch (IOException e){
+            System.out.println(e.getMessage());
+        }
     }
 
     public static void stringChecking(String str1, String str2, String str3) throws MyTypeException{
@@ -91,8 +108,7 @@ public class homework3 {
         } catch (NumberFormatException e){
             throw new MyTypeException("Неверный тип данных для номера телефона");
         }
-    }
-    
+    } 
 }
     
 
